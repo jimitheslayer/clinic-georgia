@@ -14,6 +14,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+  :root{--bg:#f5f2ec;--panel:#ffffff;--ink:#1d2733;--ink-soft:#4a5563;--ink-mute:#8791a0;--rule:#e6e0d5;--rule-soft:#efeae1;--law:#7a3b5e;--law-bg:#f5ebf0;--edu:#b5822a;--edu-bg:#f7efdd;--sci:#0f6068;--sci-bg:#e2f0ef;--primary:#0f5c5c;--primary-deep:#0a4144;--cr:#1E4B7C;--cr-bg:#E6EBF1;--accent:#c0632f;--verified:#2f7d5b;--coming:#a99f8d;}
+  *{box-sizing:border-box;}
   html,body{height:100%;}
   body{margin:0;background:var(--bg);color:var(--ink);font-family:'Inter',-apple-system,sans-serif;font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow:hidden;}
   .app{height:100vh;display:flex;flex-direction:column;}
@@ -365,28 +367,31 @@
   .pv-poster{width:100%;max-width:520px;border-radius:14px;display:block;margin:0 0 22px}
 
   /* ---- access gate ---- */
-  #gate{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:24px;}
+  /* Palette is inherited from :root. The door uses the same gradient as the
+     topbar so the gate reads as the front of the dashboard rather than a
+     detached form. */
+  #gate{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:24px;
+        background:linear-gradient(105deg,var(--primary-deep) 0%,var(--primary) 55%,#14706b 100%);}
   #gate.hidden{display:none;}
-  .gate-card{background:var(--panel);border:1px solid var(--rule);border-radius:14px;max-width:420px;width:100%;padding:30px 28px;box-shadow:0 10px 40px rgba(20,30,40,.10);}
-  .gate-card h1{font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:23px;margin:0 0 6px;color:var(--ink);}
-  .gate-card .gsub{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-mute);margin:0 0 18px;}
+  .gate-card{background:var(--panel);border:1px solid var(--rule);border-radius:14px;max-width:430px;width:100%;
+        padding:32px 30px;box-shadow:0 18px 50px rgba(10,22,28,.28);}
+  .gate-mark{width:34px;height:34px;border-radius:9px;background:var(--law-bg);color:var(--law);
+        display:flex;align-items:center;justify-content:center;font-size:17px;margin-bottom:14px;}
+  .gate-card h1{font-family:'Fraunces',serif;font-weight:600;font-size:22px;margin:0 0 5px;color:var(--ink);line-height:1.2;}
+  .gate-card .gsub{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;
+        color:var(--sci);margin:0 0 18px;}
   .gate-card p{font-size:13px;color:var(--ink-soft);line-height:1.55;margin:0 0 16px;}
-  .gate-card input{width:100%;border:1px solid var(--rule);border-radius:9px;padding:11px 13px;font-size:14px;font-family:inherit;color:var(--ink);background:#fff;margin-bottom:10px;}
-  .gate-card input:focus{outline:none;border-color:var(--sci);}
-  .gate-card button{width:100%;border:none;border-radius:9px;padding:11px;font-family:inherit;font-weight:600;font-size:13.5px;background:var(--primary-deep);color:#fff;cursor:pointer;}
+  .gate-card input{width:100%;box-sizing:border-box;border:1px solid var(--rule);border-radius:9px;padding:11px 13px;
+        font-size:14px;font-family:inherit;color:var(--ink);background:#fff;margin-bottom:10px;}
+  .gate-card input:focus{outline:none;border-color:var(--sci);box-shadow:0 0 0 3px var(--sci-bg);}
+  .gate-card button{width:100%;box-sizing:border-box;border:none;border-radius:9px;padding:12px;font-family:inherit;
+        font-weight:600;font-size:13.5px;background:var(--primary-deep);color:#fff;cursor:pointer;letter-spacing:.01em;}
+  .gate-card button:hover{background:var(--primary);}
   .gate-err{font-size:12px;color:var(--law);margin:8px 0 0;min-height:16px;}
-  .gate-fine{font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--ink-mute);line-height:1.55;margin-top:18px;padding-top:14px;border-top:1px solid var(--rule);}
+  .gate-fine{font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--ink-mute);line-height:1.55;
+        margin-top:18px;padding-top:14px;border-top:1px solid var(--rule);}
   #appWrap.locked{display:none;}
   .sec-currency{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink-mute);margin:2px 0 14px;}
-
-  /* mobile overflow fix, 2026-08-29. The rail elements the engine emits are
-     content-box, so padding was added outside the declared width and pushed
-     them 6 to 8px past a 390px viewport. border-box brings the padding
-     inside the budget. Deliberately no overflow-x:hidden, which would clip
-     the symptom and hide any future overflow from measurement. */
-  @media (max-width:760px){
-    .rail-search,.rail-item,.drop-summary{box-sizing:border-box;max-width:100%;}
-  }
 
 </style>
 </head>
@@ -1485,6 +1490,7 @@ const PV_DOCS = {
     var g = document.getElementById('gate');
     g.innerHTML =
       '<div class="gate-card">' +
+        '<div class="gate-mark">&#9878;</div>' +
         '<h1>' + esc(D.gate.heading) + '</h1>' +
         '<p class="gsub">' + esc(D.gate.sub) + '</p>' +
         '<p>' + esc(D.gate.body) + '</p>' +
